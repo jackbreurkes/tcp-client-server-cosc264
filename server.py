@@ -34,17 +34,23 @@ def main():
         args = sys.argv
 
     port = get_port_from_args(args)
-    sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    except OSError:
+        print("Error creating socket:", e)
+        sys.exit(4)
+        
     try:
         sock.bind(('localhost', port))
     except OSError as e:
         print(e)
-        sys.exit(4)
+        sys.exit(5)
 
     sock.listen()
-    while True:
-        connection, client_addr = sock.accept()
-
+    connection, client_addr = sock.accept()
+    data = sock.recv(200)
+    print(data.decode())
+    print("conn & done")
     sock.close()
 
 
