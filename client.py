@@ -1,5 +1,5 @@
 #!/usr/local/bin/python3
-
+import math
 import os
 import sys
 import socket
@@ -36,6 +36,7 @@ def main():
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     except OSError:
         sys.exit('could not create a socket.')
+    sock.settimeout(1)
 
     valids = [tup for tup in addr if tup[0] == socket.AddressFamily.AF_INET and tup[1] == socket.SocketKind.SOCK_STREAM]
     if len(valids) == 0:
@@ -49,7 +50,6 @@ def main():
 
     message = createfilerequest(0x497E, 1, args[3])
     sock.send(message)
-
     readfileresponse(sock, args[3])
 
 
@@ -98,20 +98,34 @@ def readfileresponse(conn, filename):
         sys.exit('could not open {} locally.'.format(filename))
 
     filesize = int.from_bytes(pktheader[4:8], 'big')
-    while filesize > 0:
+
+    bytesread = 0
+    filedata = bytes(1)
+    while len(filedata) > 0:  # should read until the connection is closed from the server side, or the socket times out
         try:
-            filedata = conn.recv(min(filesize, 4096))
+            filedata = conn.recv(4096)
         except socket.timeout:
             print('timeout while reading FileResponse body')
             conn.close()
-            return
-
+            f.close()
+            sys.exit()
+        bytesread += len(filedata)
+        print(len(filedata))
         try:
             f.write(filedata.decode('utf-8'))
         except IOError:
             conn.close()
             sys.exit('error while writing received data to local file.')
-        filesize -= 4096
+
+    if bytesread != filesize:
+        print("invalid number of bytes read: expected {}, got {}.".format(filesize, bytesread))
+        conn.close()
+        f.close()
+        sys.exit()
+
+    print("file {} successfully written locally. {} bytes read in total.".format(filename, bytesread))
+    conn.close()
+    f.close()
 
 
 if __name__ == '__main__':
