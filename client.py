@@ -6,14 +6,10 @@ import socket
 
 
 def main():
-    if len(sys.argv) == 1:
-        # DEBUG
-        args = ['', 'localhost', '10234', 'test_file.txt']
-    else:
-        args = sys.argv
+    args = sys.argv
 
     if len(args) != 4:
-        sys.exit('usage: client.py [sever ip] [files port number] [file name]')
+        sys.exit('usage: client.py [sever ip] [server port number] [file name]')
 
     try:
         addr = socket.getaddrinfo(args[1], args[2])
@@ -28,9 +24,8 @@ def main():
     if not (1024 <= portnum <= 64000):
         sys.exit('port number must be between 1024 and 64000 (inclusive).')
 
-    # if os.path.exists(args[3]) and os.path.isfile(args[3]):
-    #     sys.exit('a local file named {} already exists. please rename it or choose a different file.'.format(args[3]))
-    # ^^ DEBUG
+    if os.path.exists(args[3]) and os.path.isfile(args[3]):
+        sys.exit('a local file named {} already exists. please rename it or choose a different file.'.format(args[3]))
 
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -69,27 +64,22 @@ def readfileresponse(conn, filename):
     try:
         pktheader = conn.recv(8)
     except socket.timeout:
-        print('timeout reading FileResponse header')
         conn.close()
-        return
+        sys.exit('timeout reading FileResponse header')
 
     if int.from_bytes(pktheader[0:2], 'big') != 0x497E:
-        print('FileResponse has invalid MagicNo field value.')
         conn.close()
-        return
+        sys.exit('FileResponse has invalid MagicNo field value.')
     if pktheader[2] != 2:
-        print('FileResponse has invalid Type field value.')
         conn.close()
-        return
+        sys.exit('FileResponse has invalid Type field value.')
 
     if pktheader[3] not in [0, 1]:
-        print('FileResponse has invalid StatusCode field value.')
         conn.close()
-        return
+        sys.exit('FileResponse has invalid StatusCode field value.')
     if pktheader[3] == 0:
-        print('Requested file could not be retrieved by the server.')
         conn.close()
-        return
+        sys.exit('Requested file could not be retrieved by the server.')
 
     try:
         f = open(filename, 'w+')
@@ -101,7 +91,7 @@ def readfileresponse(conn, filename):
 
     bytesread = 0
     filedata = bytes(1)
-    while len(filedata) > 0:  # should read until the connection is closed from the server side, or the socket times out
+    while len(filedata) > 0:  # will read until the connection is closed from the server side or the socket times out
         try:
             filedata = conn.recv(4096)
         except socket.timeout:
@@ -110,7 +100,6 @@ def readfileresponse(conn, filename):
             f.close()
             sys.exit()
         bytesread += len(filedata)
-        print(len(filedata))
         try:
             f.write(filedata.decode('utf-8'))
         except IOError:
@@ -118,14 +107,13 @@ def readfileresponse(conn, filename):
             sys.exit('error while writing received data to local file.')
 
     if bytesread != filesize:
-        print("invalid number of bytes read: expected {}, got {}.".format(filesize, bytesread))
         conn.close()
         f.close()
-        sys.exit()
+        sys.exit("invalid number of bytes read: expected {}, got {}.".format(filesize, bytesread))
 
     print("file {} successfully written locally. {} bytes read in total.".format(filename, bytesread))
-    conn.close()
     f.close()
+    conn.close()
 
 
 if __name__ == '__main__':

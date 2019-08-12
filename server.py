@@ -10,11 +10,7 @@ MAX_PORT = 64000
 
 
 def main():
-    if len(sys.argv) == 1:
-        # DEBUG
-        args = ['', '10234']
-    else:
-        args = sys.argv
+    args = sys.argv
 
     port = get_port_from_args(args)
 
@@ -38,7 +34,7 @@ def main():
         print('')
         connection, clientaddrinfo = sock.accept()
         connection.settimeout(1)
-        print("connection accepted from", clientaddrinfo[0], "on port", clientaddrinfo[1], "at", datetime.now())
+        print("connection accepted from", clientaddrinfo[0], "port", clientaddrinfo[1], "at", datetime.now())
         readfilerequest(connection)
 
 
