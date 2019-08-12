@@ -94,11 +94,14 @@ def readfileresponse(conn, filename):
     while len(filedata) > 0:  # will read until the connection is closed from the server side or the socket times out
         try:
             filedata = conn.recv(4096)
-        except socket.timeout:
-            print('timeout while reading FileResponse body')
+        except OSError:
             conn.close()
             f.close()
-            sys.exit()
+            sys.exit('error while reading FileResponse body.')
+        except socket.timeout:
+            conn.close()
+            f.close()
+            sys.exit('timeout while reading FileResponse body.')
         bytesread += len(filedata)
         try:
             f.write(filedata.decode('utf-8'))

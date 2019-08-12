@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f72b30d9-7377-4057-a441-48fccec4e696" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/server_files/empty.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -141,6 +139,7 @@
       <workItem from="1565399856863" duration="302000" />
       <workItem from="1565597862427" duration="39000" />
       <workItem from="1565600620882" duration="4871000" />
+      <workItem from="1565646875977" duration="1469000" />
     </task>
     <task id="LOCAL-00001" summary="updated client and server to point where data is being written to client files (not quite in the correct way maybe?)">
       <created>1564891091314</created>
@@ -163,7 +162,14 @@
       <option name="project" value="LOCAL" />
       <updated>1565395988197</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="all required functionality implemented?">
+      <created>1565646888208</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1565646888208</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
