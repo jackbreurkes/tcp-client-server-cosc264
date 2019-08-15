@@ -82,7 +82,7 @@ def readfilerequest(conn):
         conn.close()
         return
 
-    filename = "server_files/" + filename_bytes.decode('utf-8')
+    filename = filename_bytes.decode('utf-8')
     try:
         f = open(filename, 'rb')
     except IOError:
