@@ -82,7 +82,7 @@ def readfileresponse(conn, filename):
         sys.exit('Requested file could not be retrieved by the server.')
 
     try:
-        f = open(filename, 'w+')
+        f = open(filename, 'wb')
     except IOError:
         conn.close()
         sys.exit('could not open {} locally.'.format(filename))
@@ -104,7 +104,7 @@ def readfileresponse(conn, filename):
             sys.exit('timeout while reading FileResponse body.')
         bytesread += len(filedata)
         try:
-            f.write(filedata.decode('utf-8'))
+            f.write(filedata)
         except IOError:
             conn.close()
             sys.exit('error while writing received data to local file.')

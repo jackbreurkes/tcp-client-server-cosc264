@@ -2,7 +2,6 @@
 
 import sys
 import socket
-import time
 from datetime import datetime
 
 MIN_PORT = 1024
@@ -85,7 +84,7 @@ def readfilerequest(conn):
 
     filename = "server_files/" + filename_bytes.decode('utf-8')
     try:
-        f = open(filename)
+        f = open(filename, 'rb')
     except IOError:
         res = createfileresponse(0x497E, 2, 0)
         conn.send(res)
@@ -93,7 +92,7 @@ def readfilerequest(conn):
         print('{} does not exist or could not be opened.'.format(filename))
         return
 
-    filedata = f.read().encode('utf-8')
+    filedata = f.read()
     f.close()
     res = createfileresponse(0x497E, 2, 1, filedata)
     conn.send(res)
